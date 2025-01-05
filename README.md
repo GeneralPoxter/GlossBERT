@@ -1,7 +1,6 @@
 # GlossBERT
 
-This code implements the paper "GlossBERT: BERT for Word Sense Disambiguation with Gloss Knowledge" ([Huang et al. 2019](https://aclanthology.org/D19-1355/)).
-We use the Hugging Face `transformers` library to train GlossBERT on a 200k sample of the SemCor 3.0 dataset.
+This code implements the paper "GlossBERT: BERT for Word Sense Disambiguation with Gloss Knowledge" ([Huang et al. 2019](https://aclanthology.org/D19-1355/)), using the Hugging Face `transformers` library and the SemCor 3.0 dataset.
 
 ## Overview
 
@@ -20,7 +19,7 @@ We select the sense with the highest probability for class 1 to be the predicted
 We also extend GlossBERT by proposing GlossBERT-C, a model for *contrastive* context-gloss classification.
 This extension is motivated by the hypothesis that BERT might learn more meaningful differences between senses if positive and negative examples are juxtaposed in the same input sequence during training and inference.
 
-To make the task contrastive, we train BERT for binary *triple* (as opposed to pair) classification, where each triple consists of a context and two glosses to be compared.
+To make the task contrastive, we train BERT for binary *triple* (instead of pair) classification, where each triple consists of a context and two glosses to be compared.
 Formally, given a word $w$ and two senses $s_1$ and $s_2$, we construct the context-gloss triple:
 
 ```
@@ -29,7 +28,7 @@ Formally, given a word $w$ and two senses $s_1$ and $s_2$, we construct the cont
 
 GlossBERT-C classifies a triple as either 0 ($s_1$ is a better sense for $w$ than $s_2$) or 1 ($s_2$ is a better sense than $s_1$).
 Inference for determining the sense of a word $w$ is performed by classifying all triples formed from all possible pairs of candidate senses $(s_1, s_2)$ where $s_1\neq s_2$.
-The sense that is classified as ``better'' in the most number of triples is selected as the predicted sense.
+The sense that is classified as "better" in the most number of triples is selected as the predicted sense.
 Compared to GlossBERT, inference cost scales from $O(n)$ to $O(n^2)$, where $n$ is the number of WordNet senses for $w$.
 
 ## Installation
@@ -78,18 +77,19 @@ python gloss_bert.py --mode eval --model-name GeneralPoxter/GlossBERT-original
 ## Results
 
 For GlossBERT and GlossBERT-C, we train a model checkpoint on both 100k and 200k context-gloss samples, and evaluate on a fixed holdout of 10k words.
+We provide links to the relevant checkpoints in the tables.
 
 ### GlossBERT
-| Model               | Accuracy |
-| ------------------- | -------- |
-| BERT<sub>BASE</sub> | 28.04%   |
-| Huang et al. 2019   | 62.12%   |
-| GlossBERT-100k      | 66.96%   |
-| GlossBERT-200k      | 69.27%   |
+| Model                                                                        | Accuracy |
+| ---------------------------------------------------------------------------- | -------- |
+| BERT<sub>BASE</sub>                                                          | 28.04%   |
+| [Huang et al. 2019](https://huggingface.co/GeneralPoxter/GlossBERT-original) | 62.12%   |
+| [GlossBERT-100k](https://huggingface.co/GeneralPoxter/GlossBERT-100k)        | 66.96%   |
+| [GlossBERT-200k](https://huggingface.co/GeneralPoxter/GlossBERT-200k)        | 69.27%   |
 
 ### GlossBERT-C
-| Model               | Accuracy |
-| ------------------- | -------- |
-| BERT<sub>BASE</sub> | 57.01%   |
-| GlossBERT-C-100k    | 68.72%   |
-| GlossBERT-C-200k    | 70.10%   |
+| Model                                                                               | Accuracy |
+| ----------------------------------------------------------------------------------- | -------- |
+| BERT<sub>BASE</sub>                                                                 | 57.01%   |
+| [GlossBERT-C-100k](https://huggingface.co/GeneralPoxter/GlossBERT-contrastive-100k) | 68.72%   |
+| [GlossBERT-C-200k](https://huggingface.co/GeneralPoxter/GlossBERT-contrastive-200k) | 70.10%   |
